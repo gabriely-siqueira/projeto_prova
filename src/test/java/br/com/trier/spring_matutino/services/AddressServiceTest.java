@@ -27,8 +27,8 @@ public class AddressServiceTest extends TestBase {
 	@DisplayName("Insert Address Test")
 	@Sql({ "classpath:/resources/sql/city.sql" })
 	void insertTest() {
-		Address address = new Address(null, "Example Street 1", "Example Neighborhood 1", "12345-678", "complement 1", "1",
-				cityService.findById(1));
+		Address address = new Address(null, "Example Street 1", "Example Neighborhood 1", "12345-678", "complement 1",
+				"1", cityService.findById(1));
 		addressService.insert(address);
 		assertEquals(1, addressService.listAll().size());
 		assertEquals("Example Street 1", address.getStreet());
@@ -36,7 +36,8 @@ public class AddressServiceTest extends TestBase {
 
 	@Test
 	@DisplayName("Find Address by ID Test")
-	@Sql({ "classpath:/resources/sql/address.sql" })
+	@Sql({ "classpath:/resources/sql/city.sql" })
+	@Sql({ "classpath:/resources/sql/address.sql"})
 	void findByIdTest() {
 		Address address = addressService.findById(1);
 		assertThat(address).isNotNull();
@@ -46,7 +47,8 @@ public class AddressServiceTest extends TestBase {
 
 	@Test
 	@DisplayName("Update Address Test")
-	@Sql({ "classpath:/resources/sql/city.sql", "classpath:/resources/sql/address.sql" })
+	@Sql({ "classpath:/resources/sql/city.sql" })
+	@Sql({ "classpath:/resources/sql/address.sql"})
 	void updateTest() {
 		Address address = new Address(1, "New Street", null, null, null, null, cityService.findById(1));
 		addressService.update(address);
@@ -56,14 +58,17 @@ public class AddressServiceTest extends TestBase {
 
 	@Test
 	@DisplayName("Find Address by Invalid ID Test")
+	@Sql({ "classpath:/resources/sql/city.sql" })
 	@Sql({ "classpath:/resources/sql/address.sql"})
 	void findByIdNotFoundTest() {
-		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> addressService.findById(10));
-		assertEquals("Address id 10 does not exist", exception.getMessage());
+		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
+				() -> addressService.findById(10));
+		assertEquals("Address 10 not found", exception.getMessage());
 	}
 
 	@Test
 	@DisplayName("Delete Address Test")
+	@Sql({ "classpath:/resources/sql/city.sql" })
 	@Sql({ "classpath:/resources/sql/address.sql" })
 	void deleteTest() {
 		addressService.delete(1);
@@ -72,17 +77,19 @@ public class AddressServiceTest extends TestBase {
 
 	@Test
 	@DisplayName("Delete Invalid Address Test")
+	@Sql({ "classpath:/resources/sql/city.sql" })
 	@Sql({ "classpath:/resources/sql/address.sql" })
 	void deleteInvalidTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> addressService.delete(5));
-		assertEquals("Address id 5 does not exist", exception.getMessage());
+		assertEquals("Address not found", exception.getMessage());
 	}
 
 	@Test
 	@DisplayName("List All Addresses Test")
-	@Sql({ "classpath:/resources/sql/address.sql"})
+	@Sql({ "classpath:/resources/sql/city.sql" })
+	@Sql({ "classpath:/resources/sql/address.sql" })
 	void listAllTest() {
-		assertEquals(2, addressService.listAll().size());
+		assertEquals(3, addressService.listAll().size());
 	}
 
 	@Test
@@ -94,7 +101,8 @@ public class AddressServiceTest extends TestBase {
 
 	@Test
 	@DisplayName("Find Address by City Test")
-	@Sql({ "classpath:/resources/sql/address.sql", "classpath:/resources/sql/team.sql", "classpath:/resources/sql/address.sql" })
+	@Sql({ "classpath:/resources/sql/city.sql" })
+	@Sql({ "classpath:/resources/sql/address.sql" })
 	void findByCityTest() {
 		List<Address> list = addressService.findByCity(cityService.findById(1));
 		assertEquals(1, list.size());
@@ -102,7 +110,8 @@ public class AddressServiceTest extends TestBase {
 
 	@Test
 	@DisplayName("Find Address by Invalid City ID Test")
-	@Sql({ "classpath:/resources/sql/city.sql", "classpath:/resources/sql/address.sql" })
+	@Sql({ "classpath:/resources/sql/city.sql" })
+	@Sql({ "classpath:/resources/sql/address.sql"})
 	void findByCityNotFoundTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> cityService.findById(10));
 		assertEquals("City 10 not found", exception.getMessage());
@@ -110,18 +119,20 @@ public class AddressServiceTest extends TestBase {
 
 	@Test
 	@DisplayName("Find Address by Street Name Test")
+	@Sql({ "classpath:/resources/sql/city.sql" })
 	@Sql({ "classpath:/resources/sql/address.sql"})
 	void findByStreetContainingIgnoreCaseTest() {
 		List<Address> list = addressService.findByStreetContainingIgnoreCase("P");
-		assertEquals(2, list.size());
+		assertEquals(3, list.size());
 	}
 
 	@Test
 	@DisplayName("Find Address by Invalid Street Name Test")
+	@Sql({ "classpath:/resources/sql/city.sql" })
 	@Sql({ "classpath:/resources/sql/address.sql"})
 	void findByStreetContainingIgnoreCaseNotFoundTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
 				() -> addressService.findByStreetContainingIgnoreCase("J"));
-		assertEquals("No address names start with J", exception.getMessage());
+		assertEquals("No street names start with J", exception.getMessage());
 	}
 }
