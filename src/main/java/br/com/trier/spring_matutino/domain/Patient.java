@@ -18,8 +18,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Entity(name = "doctor")
-public class Doctor {
+@Entity(name = "patient")
+public class Patient {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Setter
@@ -35,10 +35,6 @@ public class Doctor {
 	@Column(name = "phone_number")
 	private String phoneNumber;
 	
-	@ManyToOne
-	@JoinColumn(name = "specialty_id")
-	private Specialty specialty;
-
 	@ManyToOne
 	@JoinColumn(name = "address_id")
 	private Address address;

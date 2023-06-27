@@ -1,7 +1,7 @@
 package br.com.trier.spring_matutino.services.impl;
 
 import java.util.List;
-import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Address findById(Integer id) {
     	return addressRepository.findById(id)
-				.orElseThrow(() -> new ObjectNotFoundException("Doctor not found".formatted(id)));
+				.orElseThrow(() -> new ObjectNotFoundException("Address %d not found".formatted(id)));
     }
 
     @Override
@@ -75,7 +75,8 @@ public class AddressServiceImpl implements AddressService {
     public List<Address> findByStreetContainingIgnoreCase(String street) {
         List<Address> addresses = addressRepository.findByStreetContainingIgnoreCase(street);
         if (addresses.isEmpty()) {
-            throw new ObjectNotFoundException("No addresses found with street: " + street);
+            throw new ObjectNotFoundException("No street names start with "
+            		+ street);
         }
         return addresses;
     }
