@@ -1,7 +1,7 @@
 package br.com.trier.spring_matutino.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,28 +21,25 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Entity(name = "Doctor")
-public class Doctor {
+@Entity(name = "appointment")
+public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "email", unique = true)
-    private String email;
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private Doctor doctor;
 
     @ManyToOne
-    @JoinColumn(name = "specialty_id")
-    private Specialty specialty;
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id")
-    private Address address;
+    @Column(name = "date")
+    private LocalDate date;
 
-    @OneToMany(mappedBy = "doctor")
-    private List<PhoneNumber> phoneNumbers = new ArrayList<>();
+    @Column(name = "time")
+    private LocalTime time;
 }

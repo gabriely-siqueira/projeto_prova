@@ -19,6 +19,6 @@ public interface PhoneNumberService {
 
 	List<PhoneNumber> findByPatientId(Integer patientId);
 
-	PhoneNumber findByNumber(String number);
+	List<PhoneNumber> findByNumber(String number);
 
 }

@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PhoneNumberRepository extends JpaRepository<PhoneNumber, Integer> {
 	List<PhoneNumber> findByDoctorId(Integer doctorId);
     List<PhoneNumber> findByPatientId(Integer patientId);
-    PhoneNumber findByNumber(String number);
+    List<PhoneNumber>  findByNumber(String number);
 }
 

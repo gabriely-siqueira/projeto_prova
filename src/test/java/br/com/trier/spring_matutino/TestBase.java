@@ -7,12 +7,16 @@ import org.springframework.test.context.ActiveProfiles;
 
 import br.com.trier.spring_matutino.services.CityService;
 import br.com.trier.spring_matutino.services.AddressService;
+import br.com.trier.spring_matutino.services.AppointmentService;
 import br.com.trier.spring_matutino.services.SpecialtyService;
 import br.com.trier.spring_matutino.services.DoctorService;
+import br.com.trier.spring_matutino.services.PhoneNumberService;
 import br.com.trier.spring_matutino.services.impl.CityServiceImpl;
 import br.com.trier.spring_matutino.services.impl.AddressServiceImpl;
+import br.com.trier.spring_matutino.services.impl.AppointmentServiceImpl;
 import br.com.trier.spring_matutino.services.impl.SpecialtyServiceImpl;
 import br.com.trier.spring_matutino.services.impl.DoctorServiceImpl;
+import br.com.trier.spring_matutino.services.impl.PhoneNumberServiceImpl;
 
 
 @TestConfiguration
@@ -37,5 +41,13 @@ public class TestBase {
 	@Bean
 	public DoctorService doctorService() {
 		return new DoctorServiceImpl();
+	}
+	@Bean
+	public PhoneNumberService phoneNumberService() {
+		return new PhoneNumberServiceImpl();
+	}
+	@Bean
+	public AppointmentService appointmentService() {
+		return new AppointmentServiceImpl();
 	}
 }

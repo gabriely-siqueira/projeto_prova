@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.trier.spring_matutino.TestBase;
 import br.com.trier.spring_matutino.domain.Patient;
+import br.com.trier.spring_matutino.domain.PhoneNumber;
 import br.com.trier.spring_matutino.services.exceptions.ObjectNotFoundException;
 
 @SpringBootTest
@@ -26,18 +27,7 @@ public class PatientServiceTest extends TestBase {
     @Autowired
     private PatientService patientService;
 
-    @Test
-    @DisplayName("Insert Patient Test")
-    @Sql({ "classpath:resources/sql/city.sql" })
-    @Sql({ "classpath:resources/sql/address.sql" })
-    void insertTest() {
-        Patient patient = new Patient(1, "Paulo Siqueira", "paulosiqueira@example.com","1233667880",
-                addressService.findById(1));
-        patientService.insert(patient);
-        assertEquals(1, patientService.listAll().size());
-        assertEquals("Paulo Siqueira", patient.getName());
-    }
-
+    
     @Test
     @DisplayName("Find Patient by ID Test")
     @Sql({ "classpath:resources/sql/city.sql" })
@@ -51,16 +41,53 @@ public class PatientServiceTest extends TestBase {
     }
 
     @Test
+    @DisplayName("Insert Patient Test")
+    @Sql({ "classpath:resources/sql/city.sql" })
+    @Sql({ "classpath:resources/sql/address.sql" })
+    void insertTest() {
+        Patient patient = new Patient();
+        patient.setId(1);
+        patient.setName("Paulo Siqueira");
+        patient.setEmail("paulosiqueira@example.com");
+        
+        PhoneNumber phoneNumber = new PhoneNumber();
+        phoneNumber.setPatient(patient);
+        phoneNumber.setNumber("1233667880");
+        
+        patient.getPhoneNumbers().add(phoneNumber);
+        
+        patient.setAddress(addressService.findById(1));
+        
+        patientService.insert(patient);
+        
+        assertEquals(1, patientService.listAll().size());
+        assertEquals("Paulo Siqueira", patient.getName());
+    }
+
+    @Test
     @DisplayName("Update Patient Test")
     @Sql({ "classpath:resources/sql/city.sql" })
     @Sql({ "classpath:resources/sql/address.sql" })
     @Sql({"classpath:resources/sql/patient.sql" })
     void updateTest() {
-        Patient patient = new Patient(1, "Rogério Braga", "rojeriobraga@example.com","1234123890", 
-                addressService.findById(1));
+        Patient patient = patientService.findById(1);
+        patient.setName("Rogério Braga");
+        patient.setEmail("rojeriobraga@example.com");
+
+        // Verifique se a lista de números de telefone não está vazia antes de acessá-la
+        if (!patient.getPhoneNumbers().isEmpty()) {
+            PhoneNumber phoneNumber = patient.getPhoneNumbers().get(0);
+            phoneNumber.setNumber("1234123890");
+        }
+
         patientService.update(patient);
         Patient newPatient = patientService.findById(1);
         assertEquals("Rogério Braga", newPatient.getName());
+
+        // Verifique se a lista de números de telefone não está vazia antes de acessá-la
+        if (!newPatient.getPhoneNumbers().isEmpty()) {
+            assertEquals("1234123890", newPatient.getPhoneNumbers().get(0).getNumber());
+        }
     }
 
     @Test
@@ -71,7 +98,7 @@ public class PatientServiceTest extends TestBase {
     void findByIdNotFoundTest() {
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
                 () -> patientService.findById(10));
-        assertEquals("Patient not found", exception.getMessage());
+        assertEquals("Patient not found: 10", exception.getMessage());
     }
 
     @Test
