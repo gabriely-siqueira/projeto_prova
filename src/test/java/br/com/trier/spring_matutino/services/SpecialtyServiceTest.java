@@ -41,7 +41,7 @@ public class SpecialtyServiceTest extends TestBase {
 		Specialty specialty = new Specialty(null, "orthology");
 		IntegrityViolationException exception = assertThrows(IntegrityViolationException.class,
 				() -> service.insert(specialty));
-		assertEquals("This specialty already exists", exception.getMessage());
+		assertEquals("Esta especialidade já existe", exception.getMessage());
 	}
 
 	@Test
@@ -51,7 +51,7 @@ public class SpecialtyServiceTest extends TestBase {
 		Specialty specialty = new Specialty(null, "");
 		IntegrityViolationException exception = assertThrows(IntegrityViolationException.class,
 				() -> service.insert(specialty));
-		assertEquals("Please provide the specialty description", exception.getMessage());
+		assertEquals("É preciso fornecer a descrição da especialidade", exception.getMessage());
 	}
 
 	@Test
@@ -78,7 +78,7 @@ public class SpecialtyServiceTest extends TestBase {
 	@Sql({ "classpath:/resources/sql/specialty.sql" })
 	void deleteInexistentTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> service.delete(10));
-		assertEquals("Specialty 10 not found", exception.getMessage());
+		assertEquals("Especialidade 10 não existe", exception.getMessage());
 	}
 
 	@Test
@@ -93,7 +93,7 @@ public class SpecialtyServiceTest extends TestBase {
 	@DisplayName("Test listing empty specialties")
 	void listAllEmptyTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> service.listAll());
-		assertEquals("No specialties found", exception.getMessage());
+		assertEquals("Nenhuma especialidade foi encontrada", exception.getMessage());
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class SpecialtyServiceTest extends TestBase {
 	@Sql({ "classpath:/resources/sql/specialty.sql" })
 	void findByIdNotFoundTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> service.findById(10));
-		assertEquals("Specialty 10 not found", exception.getMessage());
+		assertEquals("Especialidade 10 não existe", exception.getMessage());
 	}
 
 	@Test
@@ -119,7 +119,7 @@ public class SpecialtyServiceTest extends TestBase {
 	void findByDescriptionContainingIgnoreCaseNotFoundTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
 				() -> service.findByDescriptionContainingIgnoreCase("pediatry"));
-		assertEquals("No specialty found with description: pediatry", exception.getMessage());
+		assertEquals("Não há especialidade com a descrição: pediatry", exception.getMessage());
 	}
 
 	@Test
@@ -137,6 +137,6 @@ public class SpecialtyServiceTest extends TestBase {
 	void findByDescriptionContainsIgnoreCaseNotFoundTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
 				() -> service.findByDescriptionContainingIgnoreCase("w"));
-		assertEquals("No specialty found with description: w", exception.getMessage());
+		assertEquals("Não há especialidade com a descrição: w", exception.getMessage());
 	}
 }

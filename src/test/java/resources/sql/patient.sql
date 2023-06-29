@@ -1,5 +1,5 @@
 INSERT INTO patient (id, name, email,cpf, address_id)
-VALUES (1, 'Paulo Siqueira', 'paulosiqueira@example.com','1423532923', 1);
+VALUES (1, 'Paulo Siqueira', 'paulosiqueira@example.com','8888888888', 1);
 
 INSERT INTO patient (id, name, email,cpf, address_id)
 VALUES (2, 'Cláudia Oliveira', 'claudiaoliveira@example.com','5555555555', 2);

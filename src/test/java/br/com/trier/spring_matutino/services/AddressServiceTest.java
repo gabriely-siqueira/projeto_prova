@@ -63,7 +63,7 @@ public class AddressServiceTest extends TestBase {
 	void findByIdNotFoundTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
 				() -> addressService.findById(10));
-		assertEquals("Address 10 not found", exception.getMessage());
+		assertEquals("Endereço 10 não foi encontrado", exception.getMessage());
 	}
 
 	@Test
@@ -81,7 +81,7 @@ public class AddressServiceTest extends TestBase {
 	@Sql({ "classpath:/resources/sql/address.sql" })
 	void deleteInvalidTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> addressService.delete(5));
-		assertEquals("Address not found", exception.getMessage());
+		assertEquals("Esse endereço não existe", exception.getMessage());
 	}
 
 	@Test
@@ -96,7 +96,7 @@ public class AddressServiceTest extends TestBase {
 	@DisplayName("List All Addresses with Empty List Test")
 	void listAllEmptyTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> addressService.listAll());
-		assertEquals("No addresses found", exception.getMessage());
+		assertEquals("Nenhum endereço encontrado", exception.getMessage());
 	}
 
 	@Test
@@ -133,6 +133,6 @@ public class AddressServiceTest extends TestBase {
 	void findByStreetContainingIgnoreCaseNotFoundTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
 				() -> addressService.findByStreetContainingIgnoreCase("J"));
-		assertEquals("No street names start with J", exception.getMessage());
+		assertEquals("Nenhuma rua começa com J", exception.getMessage());
 	}
 }

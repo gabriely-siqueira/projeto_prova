@@ -42,7 +42,7 @@ public class CityServiceTest extends TestBase {
         City city = new City(null, "Tubarão","SC");
         IntegrityViolationException exception = assertThrows(IntegrityViolationException.class,
                 () -> service.insert(city));
-        assertEquals("This city already exists", exception.getMessage());
+        assertEquals("Esta cidade já existe", exception.getMessage());
     }
 
     @Test
@@ -52,7 +52,7 @@ public class CityServiceTest extends TestBase {
         City city = new City(null, "","SC");
         IntegrityViolationException exception = assertThrows(IntegrityViolationException.class,
                 () -> service.insert(city));
-        assertEquals("Please provide the city name", exception.getMessage());
+        assertEquals("É preciso fornecer o nome da cidade", exception.getMessage());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class CityServiceTest extends TestBase {
         City city = new City(null, "Imbituba","");
         IntegrityViolationException exception = assertThrows(IntegrityViolationException.class,
                 () -> service.insert(city));
-        assertEquals("Please provide the state", exception.getMessage());
+        assertEquals("É preciso fornecer o estado", exception.getMessage());
     }
     
     @Test
@@ -89,7 +89,7 @@ public class CityServiceTest extends TestBase {
     @Sql({ "classpath:/resources/sql/city.sql" })
     void deleteInexistentTest() {
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> service.delete(10));
-        assertEquals("City 10 not found", exception.getMessage());
+        assertEquals("Cidade 10 não existe", exception.getMessage());
     }
 
     @Test
@@ -104,7 +104,7 @@ public class CityServiceTest extends TestBase {
     @DisplayName("Test listing empty cities")
     void listAllEmptyTest() {
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> service.listAll());
-        assertEquals("No cities found", exception.getMessage());
+        assertEquals("Nenhuma cidade encontrada", exception.getMessage());
     }
 
     @Test
@@ -121,7 +121,7 @@ public class CityServiceTest extends TestBase {
     @Sql({ "classpath:/resources/sql/city.sql" })
     void findByIdNotFoundTest() {
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> service.findById(10));
-        assertEquals("City 10 not found", exception.getMessage());
+        assertEquals("Cidade 10 não existe", exception.getMessage());
     }
 
     @Test
@@ -130,7 +130,7 @@ public class CityServiceTest extends TestBase {
     void findByNameContainingIgnoreCaseNotFoundTest() {
         ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
                 () -> service.findByNameContainingIgnoreCase("São Paulo"));
-        assertEquals("No cities found with name: São Paulo", exception.getMessage());
+        assertEquals("Nenhuma cidade encontrada com o nome: São Paulo", exception.getMessage());
     }
 
     @Test

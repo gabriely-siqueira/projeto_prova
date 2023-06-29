@@ -10,8 +10,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.trier.spring_matutino.TestBase;
-import br.com.trier.spring_matutino.domain.PhoneNumber;
-import br.com.trier.spring_matutino.services.exceptions.IntegrityViolationException;
 import br.com.trier.spring_matutino.services.exceptions.ObjectNotFoundException;
 
 @Transactional
@@ -27,7 +25,7 @@ public class PhoneNumberServiceTest extends TestBase {
 	private PatientService patientService;
 
 	@Test
-	@DisplayName("Teste deletar número de telefone")
+	@DisplayName("Test delete phone number")
 	@Sql({ "classpath:resources/sql/phone_number_db.sql" })
 	@Sql({ "classpath:resources/sql/phone_number.sql" })
 	void deleteTest() {
@@ -36,7 +34,7 @@ public class PhoneNumberServiceTest extends TestBase {
 	}
 
 	@Test
-	@DisplayName("Teste deletar número de telefone inexistente")
+	@DisplayName("Test delete non existent phone number")
 	@Sql({ "classpath:resources/sql/phone_number_db.sql" })
 	void deleteNotFoundTest() {
 		var exception = assertThrows(ObjectNotFoundException.class, () -> service.delete(1));
@@ -44,7 +42,7 @@ public class PhoneNumberServiceTest extends TestBase {
 	}
 
 	@Test
-	@DisplayName("Teste buscar número de telefone pelo ID")
+	@DisplayName("Test find by phone number by invalid id")
 	@Sql({ "classpath:resources/sql/phone_number_db.sql" })
 	@Sql({ "classpath:resources/sql/phone_number.sql" })
 	void findByIdTest() {
@@ -53,16 +51,16 @@ public class PhoneNumberServiceTest extends TestBase {
 	}
 
 	@Test
-	@DisplayName("Teste buscar número de telefone por ID inexistente")
+	@DisplayName("Test find by phone number by id")
 	@Sql({ "classpath:resources/sql/phone_number_db.sql" })
 	@Sql({ "classpath:resources/sql/phone_number.sql" })
 	void findByIdNotFoundTest() {
-		var exception = assertThrows(ObjectNotFoundException.class, () -> service.findById(1));
-		assertEquals("Número de telefone 1 inexistente", exception.getMessage());
+		var exception = assertThrows(ObjectNotFoundException.class, () -> service.findById(10));
+		assertEquals("Número de telefone 10 inexistente", exception.getMessage());
 	}
 
 	@Test
-	@DisplayName("Teste buscar todos os números de telefone")
+	@DisplayName("Test list all phone numbers")
 	@Sql({ "classpath:resources/sql/phone_number_db.sql" })
 	@Sql({ "classpath:resources/sql/phone_number.sql" })
 	void listAllTest() {
@@ -70,7 +68,7 @@ public class PhoneNumberServiceTest extends TestBase {
 	}
 
 	@Test
-	@DisplayName("Teste buscar todos os números de telefone com lista vazia")
+	@DisplayName("Test list all phone numbers with empty list")
 	@Sql({ "classpath:resources/sql/phone_number_db.sql" })
 	void listAllEmptyTest() {
 		var exception = assertThrows(ObjectNotFoundException.class, () -> service.listAll());
@@ -78,7 +76,7 @@ public class PhoneNumberServiceTest extends TestBase {
 	}
 
 	@Test
-	@DisplayName("Teste buscar números de telefone de um médico")
+	@DisplayName("Test find phone number by doctor")
 	@Sql({ "classpath:resources/sql/phone_number_db.sql" })
 	@Sql({ "classpath:resources/sql/phone_number.sql" })
 	void findByDoctorTest() {
@@ -88,15 +86,17 @@ public class PhoneNumberServiceTest extends TestBase {
 	}
 
 	@Test
-	@DisplayName("Teste buscar números de telefone de um médico que não possui telefone")
+	@DisplayName("Test Find Phone Numbers by a Doctor Without a Phone")
 	@Sql({ "classpath:resources/sql/phone_number_db.sql" })
+	@Sql({ "classpath:resources/sql/phone_number.sql" })
 	void findByDoctorEmptyTest() {
-		var numbers = service.findByDoctor(doctorService.findById(3));
-		assertEquals(0, numbers.size());
+		var exception = assertThrows(ObjectNotFoundException.class, () -> service.findByDoctor(doctorService.findById(3)));
+		assertEquals("Médico 3 não possui número de telefone cadastrado", exception.getMessage());
+		
 	}
 
 	@Test
-	@DisplayName("Teste buscar números de telefone de um paciente")
+	@DisplayName("Test find phone number by patient")
 	@Sql({ "classpath:resources/sql/phone_number_db.sql" })
 	@Sql({ "classpath:resources/sql/phone_number.sql" })
 	void findByPatientTest() {
@@ -106,10 +106,13 @@ public class PhoneNumberServiceTest extends TestBase {
 	}
 
 	@Test
-	@DisplayName("Teste buscar números de telefone de um paciente que não possui telefone")
+	@DisplayName("Test Find Phone Numbers by a patient without a Phone")
 	@Sql({ "classpath:resources/sql/phone_number_db.sql" })
+	@Sql({ "classpath:resources/sql/phone_number.sql" })
 	void findByPatientEmptyTest() {
-		var numbers = service.findByPatient(patientService.findById(1));
-		assertEquals(0, numbers.size());
+		var exception = assertThrows(ObjectNotFoundException.class, () -> service.findByPatient(patientService.findById(3)));
+		assertEquals("Paciente 3 não possui número de telefone cadastrado", exception.getMessage());
 	}
+	
+	
 }

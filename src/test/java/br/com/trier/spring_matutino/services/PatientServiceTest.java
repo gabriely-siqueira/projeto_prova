@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.trier.spring_matutino.TestBase;
 import br.com.trier.spring_matutino.domain.Patient;
+import br.com.trier.spring_matutino.services.exceptions.IntegrityViolationException;
 import br.com.trier.spring_matutino.services.exceptions.ObjectNotFoundException;
 
 @SpringBootTest
@@ -37,7 +38,7 @@ public class PatientServiceTest extends TestBase {
 	}
 
 	@Test
-    @DisplayName("Insert Patient Test")
+    @DisplayName("Insert patient Test")
     @Sql({ "classpath:resources/sql/city.sql" })
     @Sql({ "classpath:resources/sql/address.sql" })
     void insertTest() {
@@ -47,7 +48,40 @@ public class PatientServiceTest extends TestBase {
         assertEquals(1, patientService.listAll().size());
         assertEquals("Paulo Siqueira", patient.getName());
     }
+	@Test
+	@DisplayName("Test insert patient with duplicate cpf")
+	@Sql({ "classpath:resources/sql/city.sql" })
+	@Sql({ "classpath:resources/sql/address.sql" })
+	@Sql({ "classpath:resources/sql/patient.sql" })
+	void insertDuplicatedTest() {
+		Patient patient = new Patient(1, "Paulo Siqueira", "paulosiqueira@example.com","5555555555",
+                addressService.findById(1));
 
+	    var exception = assertThrows(IntegrityViolationException.class, () -> patientService.insert(patient));
+	    assertEquals("O CPF desse paciente já existe", exception.getMessage());
+	}
+
+
+	@Test
+	@DisplayName("Test find Patient by cpf")
+	@Sql({ "classpath:resources/sql/city.sql" })
+	@Sql({ "classpath:resources/sql/address.sql" })
+	@Sql({ "classpath:resources/sql/patient.sql" })
+	void findByCpfTest() {
+		var doctor = patientService.findByCpf("5555555555");
+		assertEquals("Cláudia Oliveira", doctor.getName());
+
+	}
+
+	@Test
+	@DisplayName("Test find Patient by invalid cpf")
+	@Sql({ "classpath:resources/sql/city.sql" })
+	@Sql({ "classpath:resources/sql/address.sql" })
+	@Sql({ "classpath:resources/sql/patient.sql" })
+	void findByCpfNotFoundTest() {
+		var exception = assertThrows(ObjectNotFoundException.class, () -> patientService.findByCpf("14536987555"));
+		assertEquals("Paciente 14536987555 inexistente", exception.getMessage());
+	}
     @Test
     @DisplayName("Update Patient Test")
     @Sql({ "classpath:resources/sql/city.sql" })
@@ -69,7 +103,7 @@ public class PatientServiceTest extends TestBase {
 	void findByIdNotFoundTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class,
 				() -> patientService.findById(10));
-		assertEquals("Patient not found: 10", exception.getMessage());
+		assertEquals("Paciente 10 não foi encontrado", exception.getMessage());
 	}
 
 	@Test
@@ -89,7 +123,7 @@ public class PatientServiceTest extends TestBase {
 	@Sql({ "classpath:resources/sql/patient.sql" })
 	void deleteInvalidTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> patientService.delete(5));
-		assertEquals("Patient not found", exception.getMessage());
+		assertEquals("Paciente não existe", exception.getMessage());
 	}
 
 	@Test
@@ -105,7 +139,7 @@ public class PatientServiceTest extends TestBase {
 	@DisplayName("List All Patients with Empty List Test")
 	void listAllEmptyTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> patientService.listAll());
-		assertEquals("No patients found", exception.getMessage());
+		assertEquals("Nenhum paciente encontrado", exception.getMessage());
 	}
 
 }
