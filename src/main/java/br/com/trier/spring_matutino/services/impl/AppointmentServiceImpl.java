@@ -15,93 +15,92 @@ import br.com.trier.spring_matutino.services.exceptions.ObjectNotFoundException;
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
 
-    @Autowired
-    private AppointmentRepository appointmentRepository;
+	@Autowired
+	private AppointmentRepository appointmentRepository;
 
-    @Override
-    public Appointment insert(Appointment appointment) {
-        return appointmentRepository.save(appointment);
-    }
+	@Override
+	public Appointment insert(Appointment appointment) {
+		return appointmentRepository.save(appointment);
+	}
 
-    @Override
-    public List<Appointment> listAll() {
-        List<Appointment> appointments = appointmentRepository.findAll();
-        if (appointments.isEmpty()) {
-            throw new ObjectNotFoundException("No appointments found");
-        }
-        return appointments;
-    }
+	@Override
+	public List<Appointment> listAll() {
+		List<Appointment> appointments = appointmentRepository.findAll();
+		if (appointments.isEmpty()) {
+			throw new ObjectNotFoundException("Nenhuma consulta encontrada");
+		}
+		return appointments;
+	}
 
-    @Override
-    public Appointment findById(Integer id) {
-        return appointmentRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Appointment not found: " + id));
-    }
+	@Override
+	public Appointment findById(Integer id) {
 
-    @Override
-    public Appointment update(Appointment appointment) {
-        validateAppointmentId(appointment.getId());
-        return appointmentRepository.save(appointment);
-    }
+		return appointmentRepository.findById(id)
+				.orElseThrow(() -> new ObjectNotFoundException("Consulta %d não existe".formatted(id)));
+	}
 
-    @Override
-    public void delete(Integer id) {
-        if (!appointmentRepository.existsById(id)) {
-            throw new ObjectNotFoundException("Appointment not found: " + id);
-        }
-        appointmentRepository.deleteById(id);
-    }
+	@Override
+	public Appointment update(Appointment appointment) {
+		validateAppointmentId(appointment.getId());
+		return appointmentRepository.save(appointment);
+	}
 
-    @Override
-    public List<Appointment> findByDoctorId(Integer doctorId) {
-        List<Appointment> appointments = appointmentRepository.findByDoctorId(doctorId);
-        if (appointments.isEmpty()) {
-            throw new ObjectNotFoundException("No appointments found for doctor ID: " + doctorId);
-        }
-        return appointments;
-    }
+	@Override
+	public void delete(Integer id) {
+		if (!appointmentRepository.existsById(id)) {
+			throw new ObjectNotFoundException("Consulta %d não existe".formatted(id));
+		}
+		appointmentRepository.deleteById(id);
+	}
 
-    @Override
-    public List<Appointment> findByPatientId(Integer patientId) {
-        List<Appointment> appointments = appointmentRepository.findByPatientId(patientId);
-        if (appointments.isEmpty()) {
-            throw new ObjectNotFoundException("No appointments found for patient ID: " + patientId);
-        }
-        return appointments;
-    }
+	@Override
+	public List<Appointment> findByDoctorId(Integer doctorId) {
+		List<Appointment> appointments = appointmentRepository.findByDoctorId(doctorId);
+		if (appointments.isEmpty()) {
+			throw new ObjectNotFoundException("Não há consultas com médico %d".formatted(doctorId));
+		}
+		return appointments;
+	}
 
-    @Override
-    public List<Appointment> findByDate(LocalDate date) {
-        List<Appointment> appointments = appointmentRepository.findByDate(date);
-        if (appointments.isEmpty()) {
-            throw new ObjectNotFoundException("No appointments found for date: " + date);
-        }
-        return appointments;
-    }
+	@Override
+	public List<Appointment> findByPatientId(Integer patientId) {
+		List<Appointment> appointments = appointmentRepository.findByPatientId(patientId);
+		if (appointments.isEmpty()) {
+			throw new ObjectNotFoundException("Não há consultas marcadas com paciente %d".formatted(patientId));
+		}
+		return appointments;
+	}
 
-    @Override
-    public List<Appointment> findByDateAndTime(LocalDate date, LocalTime time) {
-        List<Appointment> appointments = appointmentRepository.findByDateAndTime(date, time);
-        if (appointments.isEmpty()) {
-            throw new ObjectNotFoundException("No appointments found for date: " + date + " and time: " + time);
-        }
-        return appointments;
-    }
+	@Override
+	public List<Appointment> findByDate(LocalDate date) {
+		List<Appointment> appointments = appointmentRepository.findByDate(date);
+		if (appointments.isEmpty()) {
+			throw new ObjectNotFoundException("Não há consultas marcadas no dia " + date);
+		}
+		return appointments;
+	}
 
-    @Override
-    public List<Appointment> findByDateBetween(LocalDate startDate, LocalDate endDate) {
-        List<Appointment> appointments = appointmentRepository.findByDateBetween(startDate, endDate);
-        if (appointments.isEmpty()) {
-            throw new ObjectNotFoundException(
-                    "No appointments found between " + startDate + " and " + endDate);
-        }
-        return appointments;
-    }
+	@Override
+	public List<Appointment> findByDateAndTime(LocalDate date, LocalTime time) {
+		List<Appointment> appointments = appointmentRepository.findByDateAndTime(date, time);
+		if (appointments.isEmpty()) {
+			throw new ObjectNotFoundException("Não há consultas marcadas no dia: " + date + " as " + time);
+		}
+		return appointments;
+	}
 
+	@Override
+	public List<Appointment> findByDateBetween(LocalDate startDate, LocalDate endDate) {
+		List<Appointment> appointments = appointmentRepository.findByDateBetween(startDate, endDate);
+		if (appointments.isEmpty()) {
+			throw new ObjectNotFoundException("Não há consultas marcadas entre " + startDate + " e " + endDate);
+		}
+		return appointments;
+	}
 
-    private void validateAppointmentId(Integer id) {
-        if (id == null || !appointmentRepository.existsById(id)) {
-            throw new ObjectNotFoundException("Invalid appointment ID: " + id);
-        }
-    }
+	private void validateAppointmentId(Integer id) {
+		if (id == null || !appointmentRepository.existsById(id)) {
+			throw new ObjectNotFoundException("Invalid appointment ID: " + id);
+		}
+	}
 }

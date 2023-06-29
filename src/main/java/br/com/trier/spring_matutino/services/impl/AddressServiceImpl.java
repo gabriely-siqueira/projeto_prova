@@ -27,9 +27,9 @@ public class AddressServiceImpl implements AddressService {
 
     private void validateAddress(Address address) {
         if (address == null) {
-            throw new IntegrityViolationException("The address is null");
+            throw new IntegrityViolationException("O endereço está nulo");
         } else if (address.getStreet() == null || address.getStreet().isBlank()) {
-            throw new IntegrityViolationException("Please provide the street name");
+            throw new IntegrityViolationException("É preciso fornecer o nome da rua");
         }
     }
 
@@ -37,7 +37,7 @@ public class AddressServiceImpl implements AddressService {
     public List<Address> listAll() {
         List<Address> addresses = addressRepository.findAll();
         if (addresses.isEmpty()) {
-            throw new ObjectNotFoundException("No addresses found");
+            throw new ObjectNotFoundException("Nenhum endereço encontrado");
         }
         return addresses;
     }
@@ -45,7 +45,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Address findById(Integer id) {
     	return addressRepository.findById(id)
-				.orElseThrow(() -> new ObjectNotFoundException("Address %d not found".formatted(id)));
+				.orElseThrow(() -> new ObjectNotFoundException("Endereço %d não foi encontrado".formatted(id)));
     }
 
     @Override
@@ -57,7 +57,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void delete(Integer id) {
         if (!addressRepository.existsById(id)) {
-            throw new ObjectNotFoundException("Address not found");
+            throw new ObjectNotFoundException("Esse endereço não existe");
         }
         addressRepository.deleteById(id);
     }
@@ -66,7 +66,7 @@ public class AddressServiceImpl implements AddressService {
     public List<Address> findByCity(City city) {
         List<Address> addresses = addressRepository.findByCity(city);
         if (addresses.isEmpty()) {
-            throw new ObjectNotFoundException("No addresses found for city: " + city.getName());
+            throw new ObjectNotFoundException("Nenhum endereço para a cidade: " + city.getName());
         }
         return addresses;
     }
@@ -75,7 +75,7 @@ public class AddressServiceImpl implements AddressService {
     public List<Address> findByStreetContainingIgnoreCase(String street) {
         List<Address> addresses = addressRepository.findByStreetContainingIgnoreCase(street);
         if (addresses.isEmpty()) {
-            throw new ObjectNotFoundException("No street names start with "
+            throw new ObjectNotFoundException("Nenhuma rua começa com "
             		+ street);
         }
         return addresses;

@@ -7,33 +7,34 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import br.com.trier.spring_matutino.domain.Doctor;
+import br.com.trier.spring_matutino.domain.dto.DoctorDTO;
 import br.com.trier.spring_matutino.services.DoctorService;
 import br.com.trier.spring_matutino.services.SpecialtyService;
-
 
 @RestController
 @RequestMapping("/doctors")
 public class DoctorResource {
-    private final DoctorService doctorService;
-    private final SpecialtyService specialtyService;
+    @Autowired
+    private DoctorService doctorService;
 
     @Autowired
-    public DoctorResource(DoctorService doctorService, SpecialtyService specialtyService) {
-        this.doctorService = doctorService;
-        this.specialtyService = specialtyService;
-    }
+    private SpecialtyService specialtyService;
 
     @PostMapping
-    public ResponseEntity<Doctor> insert(@RequestBody Doctor doctor) {
+    public ResponseEntity<DoctorDTO> insert(@RequestBody DoctorDTO doctorDTO) {
+        Doctor doctor = new Doctor(doctorDTO);
         Doctor createdDoctor = doctorService.insert(doctor);
-        return ResponseEntity.ok(createdDoctor);
+        DoctorDTO createdDoctorDTO = createdDoctor.toDTO();
+        return ResponseEntity.ok(createdDoctorDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Doctor> update(@PathVariable Integer id, @RequestBody Doctor doctor) {
+    public ResponseEntity<DoctorDTO> update(@PathVariable Integer id, @RequestBody DoctorDTO doctorDTO) {
+        Doctor doctor = new Doctor(doctorDTO);
         doctor.setId(id);
         Doctor updatedDoctor = doctorService.update(doctor);
-        return ResponseEntity.ok(updatedDoctor);
+        DoctorDTO updatedDoctorDTO = updatedDoctor.toDTO();
+        return ResponseEntity.ok(updatedDoctorDTO);
     }
 
     @DeleteMapping("/{id}")
@@ -43,26 +44,30 @@ public class DoctorResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<Doctor>> listAll() {
+    public ResponseEntity<List<DoctorDTO>> listAll() {
         List<Doctor> doctors = doctorService.listAll();
-        return ResponseEntity.ok(doctors);
+        List<DoctorDTO> doctorDTOs = DoctorDTO.toDTOList(doctors);
+        return ResponseEntity.ok(doctorDTOs);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Doctor> findById(@PathVariable Integer id) {
+    public ResponseEntity<DoctorDTO> findById(@PathVariable Integer id) {
         Doctor doctor = doctorService.findById(id);
-        return ResponseEntity.ok(doctor);
+        DoctorDTO doctorDTO = doctor.toDTO();
+        return ResponseEntity.ok(doctorDTO);
     }
 
     @GetMapping("/specialty/{specialtyId}")
-    public ResponseEntity<List<Doctor>> findBySpecialty(@PathVariable Integer specialtyId) {
+    public ResponseEntity<List<DoctorDTO>> findBySpecialty(@PathVariable Integer specialtyId) {
         List<Doctor> doctors = doctorService.findBySpecialty(specialtyService.findById(specialtyId));
-        return ResponseEntity.ok(doctors);
+        List<DoctorDTO> doctorDTOs = DoctorDTO.toDTOList(doctors);
+        return ResponseEntity.ok(doctorDTOs);
     }
 
     @GetMapping("/name/{name}")
-    public ResponseEntity<List<Doctor>> findByNameStartsWithIgnoreCase(@PathVariable String name) {
+    public ResponseEntity<List<DoctorDTO>> findByNameStartsWithIgnoreCase(@PathVariable String name) {
         List<Doctor> doctors = doctorService.findByNameStartsWithIgnoreCase(name);
-        return ResponseEntity.ok(doctors);
+        List<DoctorDTO> doctorDTOs = DoctorDTO.toDTOList(doctors);
+        return ResponseEntity.ok(doctorDTOs);
     }
 }

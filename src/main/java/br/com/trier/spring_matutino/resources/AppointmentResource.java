@@ -79,8 +79,4 @@ public class AppointmentResource {
         List<Appointment> appointments = appointmentService.findByDateBetween(startDate, endDate);
         return ResponseEntity.ok(appointments);
     }
-
-   
-
-  
 }

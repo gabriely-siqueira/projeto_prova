@@ -1,10 +1,12 @@
 package br.com.trier.spring_matutino.services.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.trier.spring_matutino.domain.Doctor;
 import br.com.trier.spring_matutino.domain.Patient;
 import br.com.trier.spring_matutino.repositories.PatientRepository;
 import br.com.trier.spring_matutino.services.PatientService;
@@ -13,24 +15,40 @@ import br.com.trier.spring_matutino.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class PatientServiceImpl implements PatientService {
-
-    private final PatientRepository patientRepository;
-
-    @Autowired
-    public PatientServiceImpl(PatientRepository patientRepository) {
-        this.patientRepository = patientRepository;
-    }
+	@Autowired
+    private PatientRepository patientRepository;
 
     @Override
     public Patient insert(Patient patient) {
+    	validatePatient(patient);
         return patientRepository.save(patient);
     }
+    
+    private void validatePatient(Patient patient) {
+		  if(patient == null) {
+		   throw new IntegrityViolationException("O paciente não pode ser nulo");
+		  } else if(patient.getName() == null || patient.getName().isBlank()) {
+		   throw new IntegrityViolationException("Preencha o nome do paciente");
+		  } else if(patient.getCpf() == null || patient.getCpf().isBlank()) {
+		   throw new IntegrityViolationException("Preencha o CPF do paciente");
+		  }
+		  validateCpf(patient);
+		 }
+			
+		 private void validateCpf(Patient patient) {
+		  Optional<Patient> clientFound = patientRepository.findByCpf(patient.getCpf());
+		  if(clientFound.isPresent()) {
+		   if(clientFound.get().getId() != patient.getId()) {
+		    throw new IntegrityViolationException("O CPF desse paciente já existe");
+		   }
+		  }
+		 }
 
     @Override
     public List<Patient> listAll() {
         List<Patient> patients = patientRepository.findAll();
         if (patients.isEmpty()) {
-            throw new ObjectNotFoundException("No patients found");
+            throw new ObjectNotFoundException("Nenhum paciente encontrado");
         }
         return patients;
     }
@@ -38,19 +56,21 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public Patient findById(Integer id) {
         return patientRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException("Patient not found: " + id));
+        		.orElseThrow(() -> new ObjectNotFoundException("Paciente %d não foi encontrado".formatted(id)));
     }
 
     @Override
     public Patient update(Patient patient) {
-        validatePatientId(patient.getId());
+    	if(!listAll().contains(patient)) {
+			throw new ObjectNotFoundException("Paciente não existe");
+		}
         return patientRepository.save(patient);
     }
 
     @Override
     public void delete(Integer id) {
         if (!patientRepository.existsById(id)) {
-            throw new ObjectNotFoundException("Patient not found");
+            throw new ObjectNotFoundException("Paciente não existe");
         }
         patientRepository.deleteById(id);
     }
@@ -59,14 +79,15 @@ public class PatientServiceImpl implements PatientService {
     public List<Patient> findByNameStartsWithIgnoreCase(String name) {
         List<Patient> patients = patientRepository.findByNameStartsWithIgnoreCase(name);
         if (patients.isEmpty()) {
-            throw new ObjectNotFoundException("No patients found with name: " + name);
+            throw new ObjectNotFoundException("Não há pacientes com o nome: " + name);
         }
         return patients;
     }
+    @Override
+	public Patient findByCpf(String cpf) {
+		return patientRepository.findByCpf(cpf)
+				.orElseThrow(() -> new ObjectNotFoundException("Paciente %s inexistente".formatted(cpf)));
+	}
 
-    private void validatePatientId(Integer id) {
-        if (id == null) {
-            throw new IntegrityViolationException("Patient ID cannot be null");
-        }
-    }
+   
 }

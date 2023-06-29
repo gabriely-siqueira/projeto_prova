@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+import br.com.trier.spring_matutino.domain.dto.DoctorDTO;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -23,7 +24,6 @@ import lombok.Setter;
 public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter
     @Column(name = "id")
     private Integer id;
 
@@ -44,5 +44,16 @@ public class Doctor {
     @JoinColumn(name = "address_id")
     private Address address;
 
-  
+    public Doctor(DoctorDTO doctorDTO) {
+        this.name = doctorDTO.getName();
+        this.email = doctorDTO.getEmail();
+        this.cpf = doctorDTO.getCpf();
+        this.specialty = doctorDTO.getSpecialty();
+        this.address = doctorDTO.getAddress();
+    }
+
+    public DoctorDTO toDTO() {
+        return new DoctorDTO(id, name, email, cpf, specialty, address);
+    }
 }
+

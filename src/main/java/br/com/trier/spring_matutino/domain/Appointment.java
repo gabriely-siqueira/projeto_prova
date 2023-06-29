@@ -3,6 +3,9 @@ package br.com.trier.spring_matutino.domain;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import br.com.trier.spring_matutino.domain.dto.AppointmentDTO;
+import br.com.trier.spring_matutino.domain.dto.DoctorDTO;
+import br.com.trier.spring_matutino.domain.dto.PatientDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,4 +45,18 @@ public class Appointment {
 
     @Column(name = "time")
     private LocalTime time;
+
+    public Appointment(AppointmentDTO appointmentDTO) {
+        this.id = appointmentDTO.getId();
+        this.doctor = appointmentDTO.getDoctor() != null ? new Doctor(appointmentDTO.getDoctor()) : null;
+        this.patient = appointmentDTO.getPatient() != null ? new Patient(appointmentDTO.getPatient()) : null;
+        this.date = appointmentDTO.getDate();
+        this.time = appointmentDTO.getTime();
+    }
+
+    public AppointmentDTO toDTO() {
+        DoctorDTO doctorDTO = doctor != null ? doctor.toDTO() : null;
+        PatientDTO patientDTO = patient != null ? patient.toDTO() : null;
+        return new AppointmentDTO(id, doctorDTO, patientDTO, date, time);
+    }
 }

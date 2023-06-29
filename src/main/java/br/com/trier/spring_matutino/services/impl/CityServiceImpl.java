@@ -25,7 +25,7 @@ public class CityServiceImpl implements CityService {
 	    List<City> existingCities = cityRepository.findByNameContainingIgnoreCase(city.getName());
 	    for (City existingCity : existingCities) {
 	        if (!existingCity.getId().equals(city.getId())) {
-	            throw new IntegrityViolationException("This city already exists");
+	            throw new IntegrityViolationException("Esta cidade já existe");
 	        }
 	    }
 
@@ -34,13 +34,13 @@ public class CityServiceImpl implements CityService {
 
 	private void validateCity(City city) {
 		if (city == null) {
-			throw new IntegrityViolationException("The city is null");
+			throw new IntegrityViolationException("A cidade está nula");
 		}
 		if (city.getName() == null || city.getName().isBlank()) {
-			throw new IntegrityViolationException("Please provide the city name");
+			throw new IntegrityViolationException("É preciso fornecer o nome da cidade");
 		}
 		if (city.getState() == null || city.getState().isBlank()) {
-			throw new IntegrityViolationException("Please provide the state");
+			throw new IntegrityViolationException("É preciso fornecer o estado");
 		}
 	}
 
@@ -48,14 +48,14 @@ public class CityServiceImpl implements CityService {
 	public List<City> listAll() {
 		List<City> cities = cityRepository.findAll();
 		if (cities.isEmpty()) {
-			throw new ObjectNotFoundException("No cities found");
+			throw new ObjectNotFoundException("Nenhuma cidade encontrada");
 		}
 		return cities;
 	}
 
 	@Override
 	public City findById(Integer id) {
-		return cityRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("City %d not found".formatted(id)));
+		return cityRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Cidade %d não existe".formatted(id)));
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class CityServiceImpl implements CityService {
 	@Override
 	public void delete(Integer id) {
 		if (!cityRepository.existsById(id)) {
-			throw new ObjectNotFoundException("City %d not found".formatted(id));
+			throw new ObjectNotFoundException("Cidade %d não existe".formatted(id));
 		}
 		cityRepository.deleteById(id);
 	}
@@ -76,7 +76,7 @@ public class CityServiceImpl implements CityService {
 	public List<City> findByNameContainingIgnoreCase(String name) {
 		List<City> cities = cityRepository.findByNameContainingIgnoreCase(name);
 		if (cities.isEmpty()) {
-			throw new ObjectNotFoundException("No cities found with name: " + name);
+			throw new ObjectNotFoundException("Nenhuma cidade encontrada com o nome: " + name);
 		}
 		return cities;
 	}

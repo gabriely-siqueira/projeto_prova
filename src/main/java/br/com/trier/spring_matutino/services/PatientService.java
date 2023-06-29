@@ -17,6 +17,8 @@ public interface PatientService {
     void delete(Integer id);
 
     List<Patient> findByNameStartsWithIgnoreCase(String name);
+    
+    Patient findByCpf(String cpf);
 
 
 }

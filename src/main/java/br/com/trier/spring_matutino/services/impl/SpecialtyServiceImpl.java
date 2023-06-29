@@ -26,14 +26,14 @@ public class SpecialtyServiceImpl implements SpecialtyService {
 
 	private void validateSpecialty(Specialty specialty) {
 		if (specialty == null) {
-			throw new IntegrityViolationException("The specialty is null");
+			throw new IntegrityViolationException("A especialidade está nula");
 		}
 		String description = specialty.getDescription();
 		if (description == null || description.isBlank()) {
-			throw new IntegrityViolationException("Please provide the specialty description");
+			throw new IntegrityViolationException("É preciso fornecer a descrição da especialidade");
 		}
 		if (!isValidDescription(description)) {
-			throw new IntegrityViolationException("Invalid specialty description");
+			throw new IntegrityViolationException("Descrição inválida");
 		}
 	}
 
@@ -48,7 +48,7 @@ public class SpecialtyServiceImpl implements SpecialtyService {
 				.findByDescriptionContainingIgnoreCase(specialty.getDescription());
 		for (Specialty existingSpecialty : existingSpecialties) {
 			if (!existingSpecialty.getId().equals(specialty.getId())) {
-				throw new IntegrityViolationException("This specialty already exists");
+				throw new IntegrityViolationException("Esta especialidade já existe");
 			}
 		}
 	}
@@ -57,7 +57,7 @@ public class SpecialtyServiceImpl implements SpecialtyService {
 	public List<Specialty> listAll() {
 		List<Specialty> specialties = specialtyRepository.findAll();
 		if (specialties.isEmpty()) {
-			throw new ObjectNotFoundException("No specialties found");
+			throw new ObjectNotFoundException("Nenhuma especialidade foi encontrada");
 		}
 		return specialties;
 	}
@@ -65,7 +65,7 @@ public class SpecialtyServiceImpl implements SpecialtyService {
 	@Override
 	public Specialty findById(Integer id) {
 		return specialtyRepository.findById(id)
-				.orElseThrow(() -> new ObjectNotFoundException("Specialty %d not found".formatted(id)));
+				.orElseThrow(() -> new ObjectNotFoundException("Especialidade %d não existe".formatted(id)));
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class SpecialtyServiceImpl implements SpecialtyService {
 	@Override
 	public void delete(Integer id) {
 		if (!specialtyRepository.existsById(id)) {
-			throw new ObjectNotFoundException("Specialty %d not found".formatted(id));
+			throw new ObjectNotFoundException("Especialidade %d não existe".formatted(id));
 		}
 		specialtyRepository.deleteById(id);
 	}
@@ -86,7 +86,7 @@ public class SpecialtyServiceImpl implements SpecialtyService {
 	public List<Specialty> findByDescriptionContainingIgnoreCase(String description) {
 		List<Specialty> specialties = specialtyRepository.findByDescriptionContainingIgnoreCase(description);
 		if (specialties.isEmpty()) {
-			throw new ObjectNotFoundException("No specialty found with description: " + description);
+			throw new ObjectNotFoundException("Não há especialidade com a descrição: " + description);
 		}
 		return specialties;
 	}
