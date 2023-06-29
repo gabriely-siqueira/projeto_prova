@@ -2,6 +2,8 @@ package br.com.trier.spring_matutino.services;
 
 import java.util.List;
 
+import br.com.trier.spring_matutino.domain.Doctor;
+import br.com.trier.spring_matutino.domain.Patient;
 import br.com.trier.spring_matutino.domain.PhoneNumber;
 
 public interface PhoneNumberService {
@@ -15,10 +17,9 @@ public interface PhoneNumberService {
 
 	void delete(Integer id);
 
-	List<PhoneNumber> findByDoctorId(Integer doctorId);
+	List<PhoneNumber> findByDoctor(Doctor doctor);
 
-	List<PhoneNumber> findByPatientId(Integer patientId);
+	List<PhoneNumber> findByPatient(Patient patient);
 
 	List<PhoneNumber> findByNumber(String number);
-
 }

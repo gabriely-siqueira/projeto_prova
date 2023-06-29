@@ -13,7 +13,7 @@ import br.com.trier.spring_matutino.services.DoctorService;
 import br.com.trier.spring_matutino.services.PhoneNumberService;
 import br.com.trier.spring_matutino.services.impl.CityServiceImpl;
 import br.com.trier.spring_matutino.services.impl.AddressServiceImpl;
-import br.com.trier.spring_matutino.services.impl.AppointmentServiceImpl;
+//import br.com.trier.spring_matutino.services.impl.AppointmentServiceImpl;
 import br.com.trier.spring_matutino.services.impl.SpecialtyServiceImpl;
 import br.com.trier.spring_matutino.services.impl.DoctorServiceImpl;
 import br.com.trier.spring_matutino.services.impl.PhoneNumberServiceImpl;
@@ -45,9 +45,9 @@ public class TestBase {
 	@Bean
 	public PhoneNumberService phoneNumberService() {
 		return new PhoneNumberServiceImpl();
-	}
+	}/*
 	@Bean
 	public AppointmentService appointmentService() {
 		return new AppointmentServiceImpl();
-	}
+	}*/
 }

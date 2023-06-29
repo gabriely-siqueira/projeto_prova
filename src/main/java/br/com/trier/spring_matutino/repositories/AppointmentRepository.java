@@ -21,7 +21,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
 
     List<Appointment> findByDateBetween(LocalDate startDate, LocalDate endDate);
 
-    List<Appointment> findByDoctorAndDate(Integer doctorId, LocalDate date);
 
-    List<Appointment> findByPatientAndDate(Integer patientId, LocalDate date);
 }

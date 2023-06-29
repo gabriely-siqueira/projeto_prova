@@ -98,25 +98,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointments;
     }
 
-    @Override
-    public List<Appointment> findByDoctorAndDate(Integer doctorId, LocalDate date) {
-        List<Appointment> appointments = appointmentRepository.findByDoctorAndDate(doctorId, date);
-        if (appointments.isEmpty()) {
-            throw new ObjectNotFoundException(
-                    "No appointments found for doctor ID: " + doctorId + " and date: " + date);
-        }
-        return appointments;
-    }
-
-    @Override
-    public List<Appointment> findByPatientAndDate(Integer patientId, LocalDate date) {
-        List<Appointment> appointments = appointmentRepository.findByPatientAndDate(patientId, date);
-        if (appointments.isEmpty()) {
-            throw new ObjectNotFoundException(
-                    "No appointments found for patient ID: " + patientId + " and date: " + date);
-        }
-        return appointments;
-    }
 
     private void validateAppointmentId(Integer id) {
         if (id == null || !appointmentRepository.existsById(id)) {

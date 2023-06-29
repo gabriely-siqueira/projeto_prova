@@ -80,17 +80,7 @@ public class AppointmentResource {
         return ResponseEntity.ok(appointments);
     }
 
-    @GetMapping("/doctor/{doctorId}/date/{date}")
-    public ResponseEntity<List<Appointment>> findByDoctorAndDate(
-            @PathVariable Integer doctorId, @PathVariable LocalDate date) {
-        List<Appointment> appointments = appointmentService.findByDoctorAndDate(doctorId, date);
-        return ResponseEntity.ok(appointments);
-    }
+   
 
-    @GetMapping("/patient/{patientId}/date/{date}")
-    public ResponseEntity<List<Appointment>> findByPatientAndDate(
-            @PathVariable Integer patientId, @PathVariable LocalDate date) {
-        List<Appointment> appointments = appointmentService.findByPatientAndDate(patientId, date);
-        return ResponseEntity.ok(appointments);
-    }
+  
 }

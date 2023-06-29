@@ -1,8 +1,5 @@
 package br.com.trier.spring_matutino.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,7 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,7 +19,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-@Entity(name = "Doctor")
+@Entity(name = "doctor")
 public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +32,9 @@ public class Doctor {
 
     @Column(name = "email", unique = true)
     private String email;
+    
+    @Column(name = "cpf", unique = true)
+    private String cpf;
 
     @ManyToOne
     @JoinColumn(name = "specialty_id")
@@ -44,6 +44,5 @@ public class Doctor {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    @OneToMany(mappedBy = "doctor")
-    private List<PhoneNumber> phoneNumbers = new ArrayList<>();
+  
 }

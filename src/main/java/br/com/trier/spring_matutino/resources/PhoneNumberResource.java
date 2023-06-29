@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import br.com.trier.spring_matutino.domain.Doctor;
+import br.com.trier.spring_matutino.domain.Patient;
 import br.com.trier.spring_matutino.domain.PhoneNumber;
 import br.com.trier.spring_matutino.services.PhoneNumberService;
 
@@ -47,14 +49,14 @@ public class PhoneNumberResource {
     }
 
     @GetMapping("/doctor/{doctorId}")
-    public ResponseEntity<List<PhoneNumber>> findByDoctorId(@PathVariable Integer doctorId) {
-        List<PhoneNumber> phoneNumbers = phoneNumberService.findByDoctorId(doctorId);
+    public ResponseEntity<List<PhoneNumber>> findByDoctorId(@PathVariable Doctor doctor) {
+        List<PhoneNumber> phoneNumbers = phoneNumberService.findByDoctor(doctor);
         return ResponseEntity.ok(phoneNumbers);
     }
 
     @GetMapping("/patient/{patientId}")
-    public ResponseEntity<List<PhoneNumber>> findByPatientId(@PathVariable Integer patientId) {
-        List<PhoneNumber> phoneNumbers = phoneNumberService.findByPatientId(patientId);
+    public ResponseEntity<List<PhoneNumber>> findByPatientId(@PathVariable Patient patient) {
+        List<PhoneNumber> phoneNumbers = phoneNumberService.findByPatient(patient);
         return ResponseEntity.ok(phoneNumbers);
     }
 
