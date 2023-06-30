@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.trier.spring_matutino.domain.Doctor;
 import br.com.trier.spring_matutino.domain.Patient;
 import br.com.trier.spring_matutino.repositories.PatientRepository;
 import br.com.trier.spring_matutino.services.PatientService;
@@ -36,9 +35,9 @@ public class PatientServiceImpl implements PatientService {
 		 }
 			
 		 private void validateCpf(Patient patient) {
-		  Optional<Patient> clientFound = patientRepository.findByCpf(patient.getCpf());
-		  if(clientFound.isPresent()) {
-		   if(clientFound.get().getId() != patient.getId()) {
+		  Optional<Patient> patientFound = patientRepository.findByCpf(patient.getCpf());
+		  if(patientFound.isPresent()) {
+		   if(patientFound.get().getId() != patient.getId()) {
 		    throw new IntegrityViolationException("O CPF desse paciente já existe");
 		   }
 		  }

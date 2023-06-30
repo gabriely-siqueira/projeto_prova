@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import br.com.trier.spring_matutino.domain.Appointment;
+
 import br.com.trier.spring_matutino.services.AppointmentService;
 
 @RestController

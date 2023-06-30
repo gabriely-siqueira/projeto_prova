@@ -4,12 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.trier.spring_matutino.domain.Appointment;
 import br.com.trier.spring_matutino.repositories.AppointmentRepository;
 import br.com.trier.spring_matutino.services.AppointmentService;
+import br.com.trier.spring_matutino.services.exceptions.IntegrityViolationException;
 import br.com.trier.spring_matutino.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -20,9 +22,38 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Override
 	public Appointment insert(Appointment appointment) {
+		validateAppointment(appointment);
 		return appointmentRepository.save(appointment);
 	}
 
+	private void validateAppointment(Appointment appointment) {
+		if (appointment == null) {
+			throw new IntegrityViolationException("O agendamento não pode ser nulo");
+		} else if (appointment.getDoctor() == null) {
+			throw new IntegrityViolationException("O médico não pode ser nulo");
+		} else if (appointment.getPatient() == null) {
+			throw new IntegrityViolationException("O paciente não pode ser nulo");
+		} else if (appointment.getDate() == null) {
+			throw new IntegrityViolationException("A data do agendamento não pode ser vazia ou nula");
+		} else if (appointment.getTime() == null) {
+			throw new IntegrityViolationException("O horário do agendamento não pode ser vazio ou nulo");
+		}
+
+		validateNonDuplicate(appointment);
+	}
+
+	private void validateNonDuplicate(Appointment appointment) {
+	    List<Appointment> appointments = appointmentRepository.findByDoctorIdAndDateAndTime(
+	            appointment.getDoctor().getId(), appointment.getDate(), appointment.getTime());
+
+	    if (!appointments.isEmpty()) 
+	        for (Appointment existingAppointment : appointments) {
+	            if (!existingAppointment.getId().equals(appointment.getId())) {
+	                throw new IntegrityViolationException("Não é possível marcar uma consulta com um médico que já possui outra consulta agendada na mesma data/hora");
+	            }
+	        }
+	    }
+	
 	@Override
 	public List<Appointment> listAll() {
 		List<Appointment> appointments = appointmentRepository.findAll();
@@ -41,7 +72,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Override
 	public Appointment update(Appointment appointment) {
-		validateAppointmentId(appointment.getId());
+		if(!listAll().contains(appointment)) {
+			throw new ObjectNotFoundException("Consulta não existe");
+		}
 		return appointmentRepository.save(appointment);
 	}
 
@@ -98,9 +131,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 		return appointments;
 	}
 
-	private void validateAppointmentId(Integer id) {
-		if (id == null || !appointmentRepository.existsById(id)) {
-			throw new ObjectNotFoundException("Invalid appointment ID: " + id);
+	@Override
+	public List<Appointment> findByDoctorIdAndDateAndTime(Integer doctorId, LocalDate date, LocalTime time) {
+		List<Appointment> appointments = appointmentRepository.findByDoctorIdAndDateAndTime(doctorId, date, time);
+		if (appointments.isEmpty()) {
+			throw new ObjectNotFoundException("Não há consultas marcadas com o médico "+ doctorId + " no dia: " + date + " as " + time);
 		}
+		return appointments;
 	}
+
+	
 }
