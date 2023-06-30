@@ -114,7 +114,7 @@ public class AddressServiceTest extends TestBase {
 	@Sql({ "classpath:/resources/sql/address.sql"})
 	void findByCityNotFoundTest() {
 		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> cityService.findById(10));
-		assertEquals("City 10 not found", exception.getMessage());
+		assertEquals("Cidade 10 não existe", exception.getMessage());
 	}
 
 	@Test

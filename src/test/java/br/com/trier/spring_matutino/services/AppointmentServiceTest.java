@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.trier.spring_matutino.TestBase;
 import br.com.trier.spring_matutino.domain.Appointment;
+
+import br.com.trier.spring_matutino.services.exceptions.IntegrityViolationException;
 import br.com.trier.spring_matutino.services.exceptions.ObjectNotFoundException;
 
 @Transactional
@@ -45,6 +47,17 @@ public class AppointmentServiceTest extends TestBase {
 		Appointment appointment = appointmentService.findById(1);
 		assertThat(appointment).isNotNull();
 		assertEquals(1, appointment.getId());
+	}
+	@Test
+	@DisplayName("Insert a duplicate appointment")
+	@Sql({ "classpath:/resources/sql/appointment_db.sql", "classpath:/resources/sql/appointment.sql" })
+	void insertDuplicatedTest() {
+	    Appointment appointment = new Appointment(null, doctorService.findById(2), patientService.findById(2),
+	            LocalDate.of(2023, 7, 5), LocalTime.of(10, 0));
+
+	    var exception = assertThrows(IntegrityViolationException.class, () -> appointmentService.insert(appointment));
+	    assertEquals("Não é possível marcar uma consulta com um médico que já possui outra consulta agendada na mesma data/hora",
+	            exception.getMessage());
 	}
 
 	@Test
@@ -144,6 +157,6 @@ public class AppointmentServiceTest extends TestBase {
 		LocalDate startDate = LocalDate.of(2023, 6, 1);
 		LocalDate endDate = LocalDate.of(2023, 6, 30);
 		List<Appointment> appointments = appointmentService.findByDateBetween(startDate, endDate);
-		assertThat(appointments).isNotEmpty();// Assert the properties of the retrieved appointments here
+		assertThat(appointments).isNotEmpty();
 	}
 }
