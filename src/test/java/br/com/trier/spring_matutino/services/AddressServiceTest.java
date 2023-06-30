@@ -72,7 +72,7 @@ public class AddressServiceTest extends TestBase {
 	@Sql({ "classpath:/resources/sql/address.sql" })
 	void deleteTest() {
 		addressService.delete(1);
-		assertEquals(2, addressService.listAll().size());
+		assertEquals(6, addressService.listAll().size());
 	}
 
 	@Test
@@ -80,7 +80,7 @@ public class AddressServiceTest extends TestBase {
 	@Sql({ "classpath:/resources/sql/city.sql" })
 	@Sql({ "classpath:/resources/sql/address.sql" })
 	void deleteInvalidTest() {
-		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> addressService.delete(5));
+		ObjectNotFoundException exception = assertThrows(ObjectNotFoundException.class, () -> addressService.delete(10));
 		assertEquals("Esse endereço não existe", exception.getMessage());
 	}
 
@@ -89,7 +89,7 @@ public class AddressServiceTest extends TestBase {
 	@Sql({ "classpath:/resources/sql/city.sql" })
 	@Sql({ "classpath:/resources/sql/address.sql" })
 	void listAllTest() {
-		assertEquals(3, addressService.listAll().size());
+		assertEquals(7, addressService.listAll().size());
 	}
 
 	@Test
@@ -105,7 +105,7 @@ public class AddressServiceTest extends TestBase {
 	@Sql({ "classpath:/resources/sql/address.sql" })
 	void findByCityTest() {
 		List<Address> list = addressService.findByCity(cityService.findById(1));
-		assertEquals(1, list.size());
+		assertEquals(2, list.size());
 	}
 
 	@Test
@@ -123,7 +123,7 @@ public class AddressServiceTest extends TestBase {
 	@Sql({ "classpath:/resources/sql/address.sql"})
 	void findByStreetContainingIgnoreCaseTest() {
 		List<Address> list = addressService.findByStreetContainingIgnoreCase("P");
-		assertEquals(3, list.size());
+		assertEquals(7, list.size());
 	}
 
 	@Test

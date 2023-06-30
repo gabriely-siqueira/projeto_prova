@@ -23,12 +23,12 @@ import org.springframework.test.context.jdbc.Sql;
 import br.com.trier.spring_matutino.SpringMatutinoApplication;
 
 import br.com.trier.spring_matutino.config.jwt.LoginDTO;
-import br.com.trier.spring_matutino.domain.Specialty;
+import br.com.trier.spring_matutino.domain.City;
 
 
 @ActiveProfiles("teste")
 @SpringBootTest(classes = SpringMatutinoApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class SpecialtyResourceTest {
+public class CityResourceTest {
 
 	@Autowired
 	protected TestRestTemplate rest;
@@ -51,180 +51,179 @@ public class SpecialtyResourceTest {
 		return headers;
 	}
 	
-	private ResponseEntity<Specialty> getSpecialty(String url) {
+	private ResponseEntity<City> getCity(String url) {
 		return rest.exchange(url, 
 							 HttpMethod.GET, 
 							 new HttpEntity<>(getHeaders("usuario1@teste.com.br", "321")), 
-							 Specialty.class);
+							 City.class);
 				
 	} 
 
 	@SuppressWarnings("unused")
-	private ResponseEntity<List<Specialty>> getSpecialties(String url) {
+	private ResponseEntity<List<City>> getSpecialties(String url) {
 		return rest.exchange(url, 
 							 HttpMethod.GET, 
 							 new HttpEntity<>(getHeaders("usuario1@teste.com.br", "321")), 
-							 new ParameterizedTypeReference<List<Specialty>>() {
+							 new ParameterizedTypeReference<List<City>>() {
 		});
 	}
 	
 	@Test
-	@DisplayName("Teste inserir especialidade com permissão de ADMIN")
+	@DisplayName("Teste inserir cidade com permissão de ADMIN")
 	@Sql({"classpath:/resources/sql/clean.sql"})
 	@Sql({"classpath:/resources/sql/user.sql"})
 	void insertAdminTest() {
-		Specialty specialty = new Specialty(null, "orthology");
+		City city = new City(null, "Tubarão","SC");
 		HttpHeaders headers = getHeaders("usuario1@teste.com.br", "321");
-		HttpEntity<Specialty> requestEntity = new HttpEntity<>(specialty, headers);
-		ResponseEntity<Specialty> responseEntity = rest.exchange("/specialties", HttpMethod.POST, requestEntity, Specialty.class);
+		HttpEntity<City> requestEntity = new HttpEntity<>(city, headers);
+		ResponseEntity<City> responseEntity = rest.exchange("/cities", HttpMethod.POST, requestEntity, City.class);
 		
 		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
-		assertEquals("orthology", responseEntity.getBody().getDescription());
+		assertEquals("Tubarão", responseEntity.getBody().getName());
 	}
 	
 	@Test
-	@DisplayName("Teste inserir especialidade com descrição duplicada")
+	@DisplayName("Teste inserir cidade com nome duplicado")
 	@Sql({"classpath:/resources/sql/clean.sql"})
 	@Sql({"classpath:/resources/sql/user.sql"})
-	@Sql({"classpath:/resources/sql/specialty.sql"})
+	@Sql({"classpath:/resources/sql/city.sql"})
 	void insertDuplicatedTest() {
-		Specialty specialty = new Specialty(null, "cardiology");
+		City city = new City(null, "Tubarão","SC");
 		HttpHeaders headers = getHeaders("usuario1@teste.com.br", "321");
-		HttpEntity<Specialty> requestEntity = new HttpEntity<>(specialty, headers);
-		ResponseEntity<Specialty> responseEntity = rest.exchange("/specialties", HttpMethod.POST, requestEntity, Specialty.class);
+		HttpEntity<City> requestEntity = new HttpEntity<>(city, headers);
+		ResponseEntity<City> responseEntity = rest.exchange("/cities", HttpMethod.POST, requestEntity, City.class);
 		
 		assertEquals(responseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
 	}
 	
 	@Test
-	@DisplayName("Teste inserir especialidade inválido")
+	@DisplayName("Teste inserir cidade inválido")
 	@Sql({"classpath:/resources/sql/clean.sql"})
 	@Sql({"classpath:/resources/sql/user.sql"})
-	@Sql({"classpath:/resources/sql/specialty.sql"})
-	void insertInvalidTest() {
-		Specialty specialty = new Specialty(null, "");
+	@Sql({"classpath:/resources/sql/city.sql"})
+	void insertInvalidCityTest() {
+		City city = new City(null, "","SC");
 		HttpHeaders headers = getHeaders("usuario1@teste.com.br", "321");
-		HttpEntity<Specialty> requestEntity = new HttpEntity<>(specialty, headers);
-		ResponseEntity<Specialty> responseEntity = rest.exchange("/specialties", HttpMethod.POST, requestEntity, Specialty.class);
+		HttpEntity<City> requestEntity = new HttpEntity<>(city, headers);
+		ResponseEntity<City> responseEntity = rest.exchange("/cities", HttpMethod.POST, requestEntity, City.class);
+		
+		assertEquals(responseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
+	}
+	@Test
+	@DisplayName("Teste inserir estado inválido")
+	@Sql({"classpath:/resources/sql/clean.sql"})
+	@Sql({"classpath:/resources/sql/user.sql"})
+	@Sql({"classpath:/resources/sql/city.sql"})
+	void insertInvalidStateTest() {
+		City city = new City(null, "São paulo","");
+		HttpHeaders headers = getHeaders("usuario1@teste.com.br", "321");
+		HttpEntity<City> requestEntity = new HttpEntity<>(city, headers);
+		ResponseEntity<City> responseEntity = rest.exchange("/cities", HttpMethod.POST, requestEntity, City.class);
 		
 		assertEquals(responseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
 	}
 	
-	
 	@Test
-	@DisplayName("Teste alterar especialidade com permissão de ADMIN")
+	@DisplayName("Teste alterar cidade com permissão de ADMIN")
 	@Sql({"classpath:/resources/sql/clean.sql"})
 	@Sql({"classpath:/resources/sql/user.sql"})
-	@Sql({"classpath:/resources/sql/specialty.sql"})
+	@Sql({"classpath:/resources/sql/city.sql"})
 	void updateAdminTest() {
-		Specialty specialty = new Specialty(2, "dermatology");
+		City city = new City(2, "São Paulo","SP");
 		HttpHeaders headers = getHeaders("usuario1@teste.com.br", "321");
-		HttpEntity<Specialty> requestEntity = new HttpEntity<>(specialty, headers);
-		ResponseEntity<Specialty> responseEntity = rest.exchange("/specialties/2", HttpMethod.PUT, requestEntity, Specialty.class);
+		HttpEntity<City> requestEntity = new HttpEntity<>(city, headers);
+		ResponseEntity<City> responseEntity = rest.exchange("/cities/2", HttpMethod.PUT, requestEntity, City.class);
 		
 		assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
-		assertEquals("dermatology", responseEntity.getBody().getDescription());
+		assertEquals("São Paulo", responseEntity.getBody().getName());
 	}
 	
-    @Test
-    @DisplayName("Teste alterar especialidade com descrição duplicada")
-    @Sql({"classpath:/resources/sql/clean.sql"})
-    @Sql({"classpath:/resources/sql/user.sql"})
-    @Sql({"classpath:/resources/sql/specialty.sql"})
-    void updateDuplicatedTest() {
-        Specialty specialty = new Specialty(2, "Ginecology");
-        HttpHeaders headers = getHeaders("usuario1@teste.com.br", "321");
-        HttpEntity<Specialty> requestEntity = new HttpEntity<>(specialty, headers);
-        ResponseEntity<Specialty> responseEntity = rest.exchange("/specialties/2", HttpMethod.PUT, requestEntity, Specialty.class);
-        
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.BAD_REQUEST);
-    }
     
     
     @Test
-    @DisplayName("Teste deletar especialidade com permissão de ADMIN")
+    @DisplayName("Teste deletar cidade com permissão de ADMIN")
     @Sql({"classpath:/resources/sql/clean.sql"})
     @Sql({"classpath:/resources/sql/user.sql"})
-    @Sql({"classpath:/resources/sql/specialty.sql"})
+    @Sql({"classpath:/resources/sql/city.sql"})
     void deleteAdminTest() {
         HttpHeaders headers = getHeaders("usuario1@teste.com.br", "321");
         HttpEntity<Void> requestEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<Void> response = rest.exchange("/specialties/2", HttpMethod.DELETE, requestEntity, Void.class);
+        ResponseEntity<Void> response = rest.exchange("/cities/2", HttpMethod.DELETE, requestEntity, Void.class);
         assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
     
     @Test
-    @DisplayName("Teste deletar especialidade inexistente")
+    @DisplayName("Teste deletar cidade inexistente")
     @Sql({"classpath:/resources/sql/clean.sql"})
     @Sql({"classpath:/resources/sql/user.sql"})
-    @Sql({"classpath:/resources/sql/specialty.sql"})
+    @Sql({"classpath:/resources/sql/city.sql"})
     void deleteNotFoundTest() {
         HttpHeaders headers = getHeaders("usuario1@teste.com.br", "321");
         HttpEntity<Void> requestEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<Void> response = rest.exchange("/specialties/10", HttpMethod.DELETE, requestEntity, Void.class);
+        ResponseEntity<Void> response = rest.exchange("/cities/10", HttpMethod.DELETE, requestEntity, Void.class);
         assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
     
     @Test
-    @DisplayName("Teste deletar especialidade com permissão de ADMIN")
+    @DisplayName("Teste deletar cidade com permissão de ADMIN")
     @Sql({"classpath:/resources/sql/clean.sql"})
     @Sql({"classpath:/resources/sql/user.sql"})
-    @Sql({"classpath:/resources/sql/specialty.sql"})
+    @Sql({"classpath:/resources/sql/city.sql"})
     void deleteUserTest() {
         HttpHeaders headers = getHeaders("test2@teste.com.br", "321");
         HttpEntity<Void> requestEntity = new HttpEntity<>(null, headers);
-        ResponseEntity<Void> response = rest.exchange("/specialties/2", HttpMethod.DELETE, requestEntity, Void.class);
+        ResponseEntity<Void> response = rest.exchange("/cities/2", HttpMethod.DELETE, requestEntity, Void.class);
         assertEquals(response.getStatusCode(), HttpStatus.FORBIDDEN);
     }
     
     @Test
-    @DisplayName("Teste listar todos os especialidades com permissão de ADMIN")
+    @DisplayName("Teste listar todos os cidades com permissão de ADMIN")
     @Sql({"classpath:/resources/sql/clean.sql"})
     @Sql({"classpath:/resources/sql/user.sql"})
-    @Sql({"classpath:/resources/sql/specialty.sql"})
+    @Sql({"classpath:/resources/sql/city.sql"})
     void listAllAdminTest() {
-        ResponseEntity<List<Specialty>> response = rest.exchange(
-                "/specialties", 
+        ResponseEntity<List<City>> response = rest.exchange(
+                "/cities", 
                 HttpMethod.GET, 
                 new HttpEntity<>(getHeaders("usuario1@teste.com.br", "321")),
-                new ParameterizedTypeReference<List<Specialty>>() {} 
+                new ParameterizedTypeReference<List<City>>() {} 
         );
         assertEquals(response.getStatusCode(), HttpStatus.OK);
-        assertEquals(4, response.getBody().size());
+        assertEquals(3, response.getBody().size());
     }
     
    
     
     @Test
-    @DisplayName("Teste buscar especialidades pelo id")
+    @DisplayName("Teste buscar cidades pelo id")
     @Sql({"classpath:/resources/sql/clean.sql"})
     @Sql({"classpath:/resources/sql/user.sql"})
-    @Sql({"classpath:/resources/sql/specialty.sql"})
+    @Sql({"classpath:/resources/sql/city.sql"})
     void findByIdTest() {
-        ResponseEntity<Specialty> response = getSpecialty("/specialties/3");
+        ResponseEntity<City> response = getCity("/cities/3");
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         
-        Specialty specialty = response.getBody();
-        assertEquals("cardiology", specialty.getDescription());
+        City city = response.getBody();
+        assertEquals("Criciúma", city.getName());
     }
     
     @Test
-    @DisplayName("Teste buscar especialidades por id inexistente")
+    @DisplayName("Teste buscar cidades por id inexistente")
     @Sql({"classpath:/resources/sql/clean.sql"})
     @Sql({"classpath:/resources/sql/user.sql"})
-    @Sql({"classpath:/resources/sql/specialty.sql"})
+    @Sql({"classpath:/resources/sql/city.sql"})
     void findByIdNotFoundTest() {
-        ResponseEntity<Specialty> response = getSpecialty("/specialties/10");
+        ResponseEntity<City> response = getCity("/cities/10");
         assertEquals(response.getStatusCode(), HttpStatus.NOT_FOUND);
     }
     
     @Test
-    @DisplayName("Teste buscar especialidade pela descrição ignorando o case")
+    @DisplayName("Teste buscar cidade pela descrição ignorando o case")
     @Sql({"classpath:/resources/sql/clean.sql"})
     @Sql({"classpath:/resources/sql/user.sql"})
-    @Sql({"classpath:/resources/sql/specialty.sql"})
+    @Sql({"classpath:/resources/sql/city.sql"})
     void findByNameEqualsIgnoreCaseTest() {
-        ResponseEntity<List<Specialty>> response = getSpecialties("/specialties/description/orthology");
+        ResponseEntity<List<City>> response = getSpecialties("/cities/name/tubarão");
         assertEquals(response.getStatusCode(), HttpStatus.OK);
         assertEquals(1, response.getBody().size());
     }
